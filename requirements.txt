@@ -1,6 +1,7 @@
 Flask
-tensorflow
+tensorflow 
 pydicom
 numpy
 pillow
-gunicorn  
+gunicorn
+matplotlib

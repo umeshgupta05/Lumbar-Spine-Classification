@@ -5,13 +5,16 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import os
+import matplotlib.pyplot as plt
+import uuid
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'static'
 
 # Load model
 model = load_model('efficientnetb0_model.keras')
 
-# Correct condition labels
+# Condition labels
 labels = {
     0: "Spinal Canal Stenosis",
     1: "Left Neural Foraminal Narrowing",
@@ -24,11 +27,11 @@ labels = {
 with open("conditions.json") as f:
     info_dict = json.load(f)
 
-# Preprocess function for DICOM
+# DICOM image preprocessing
 def preprocess_dcm(file):
     dcm = pydicom.dcmread(file)
     img = dcm.pixel_array.astype(np.float32)
-    img = np.stack((img,) * 3, axis=-1)  # 3-channel
+    img = np.stack((img,) * 3, axis=-1)
     img = tf.image.resize(img, (224, 224)).numpy()
     img /= 255.0
     return np.expand_dims(img, axis=0)
@@ -51,7 +54,19 @@ def predict():
     symptoms = info_dict.get(predicted_label, {}).get('symptoms', [])
     precautions = info_dict.get(predicted_label, {}).get('precautions', [])
 
-    return render_template("index.html", prediction=predicted_label, symptoms=symptoms, precautions=precautions)
+    # Save the uploaded DICOM image as PNG
+    file.seek(0)  # Reset file pointer
+    dcm = pydicom.dcmread(file)
+    img_array = dcm.pixel_array
+    img_filename = f"{uuid.uuid4().hex}.png"
+    img_path = os.path.join(app.config['UPLOAD_FOLDER'], img_filename)
+    plt.imsave(img_path, img_array, cmap='gray')
+
+    return render_template("index.html",
+                           prediction=predicted_label,
+                           symptoms=symptoms,
+                           precautions=precautions,
+                           image_path=img_path)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
