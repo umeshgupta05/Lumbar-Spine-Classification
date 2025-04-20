@@ -24,30 +24,3 @@
     "precautions": ["Rest", "Anti-inflammatory meds"]
   }
 }
-
-{
-  "Spinal Canal Stenosis": {
-    "symptoms": ["Back pain", "Leg numbness", "Difficulty walking"],
-    "precautions": [
-      "Avoid heavy lifting",
-      "Regular physical therapy",
-      "Proper posture"
-    ]
-  },
-  "Left Neural Foraminal Narrowing": {
-    "symptoms": ["Radiating pain", "Tingling in limbs"],
-    "precautions": ["Stretching", "Ergonomic seating"]
-  },
-  "Right Neural Foraminal Narrowing": {
-    "symptoms": ["Lower back stiffness", "Leg weakness"],
-    "precautions": ["Daily movement", "Warm compresses"]
-  },
-  "Left Subarticular Stenosis": {
-    "symptoms": ["Pain with movement", "Reduced mobility"],
-    "precautions": ["Low-impact exercise", "Stretch breaks"]
-  },
-  "Right Subarticular Stenosis": {
-    "symptoms": ["Numbness on one side", "Muscle cramps"],
-    "precautions": ["Rest", "Anti-inflammatory meds"]
-  }
-}
