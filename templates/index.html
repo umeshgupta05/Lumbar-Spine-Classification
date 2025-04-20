@@ -1,137 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spinal Condition Prediction</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spinal Condition Prediction</title>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- FontAwesome Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
 
-    <!-- Custom CSS for loader and drag-drop styling -->
-    <style>
-        .file-input-wrapper {
-            border: 2px dashed #007bff;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            color: #007bff;
-            transition: all 0.3s ease;
-        }
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f8fb;
+      transition: background-color 0.3s, color 0.3s;
+    }
 
-        .file-input-wrapper:hover {
-            background-color: #f8f9fa;
-        }
+    body.dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
 
-        .file-input-wrapper input {
-            display: none;
-        }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
-        .file-input-wrapper i {
-            font-size: 3rem;
-        }
+    .file-input-wrapper {
+      border: 2px dashed #007bff;
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      color: #007bff;
+      transition: all 0.3s ease;
+    }
 
-        .file-input-wrapper span {
-            display: block;
-            font-size: 1.1rem;
-            margin-top: 10px;
-        }
+    .file-input-wrapper:hover {
+      background-color: #e9f3ff;
+    }
 
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            margin-top: 30px;
-        }
+    body.dark-mode .file-input-wrapper:hover {
+      background-color: #1f1f1f;
+    }
 
-        .card {
-            margin-top: 30px;
-        }
+    .file-input-wrapper input {
+      display: none;
+    }
 
-        .card-body ul {
-            list-style-type: none;
-            padding: 0;
-        }
+    .file-input-wrapper i {
+      font-size: 3rem;
+    }
 
-        .card-body ul li {
-            margin: 10px 0;
-        }
-    </style>
+    .file-input-wrapper span {
+      display: block;
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .card {
+      margin-top: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.1);
+      animation: slideIn 0.5s ease-in-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .dark-toggle {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-pdf {
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container my-5">
-    <!-- File upload section -->
-    <div class="file-input-wrapper" id="fileInputWrapper" onclick="document.getElementById('fileInput').click();">
-        <input type="file" id="fileInput" name="file" accept=".dcm" onchange="uploadFile(event)">
-        <i class="fas fa-upload"></i>
-        <span>Drag & Drop or Click to Upload DICOM Image</span>
-    </div>
-
-    <!-- Loading spinner -->
-    <div class="loading-spinner" id="loadingSpinner">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-
-    <!-- Prediction result card -->
-    {% if prediction %}
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-stethoscope"></i> Prediction: {{ prediction }}</h5>
-
-                <h6 class="card-subtitle mb-2 text-muted">Symptoms</h6>
-                <ul>
-                    {% for symptom in symptoms %}
-                        <li>{{ symptom }}</li>
-                    {% endfor %}
-                </ul>
-
-                <h6 class="card-subtitle mb-2 text-muted">Precautions</h6>
-                <ul>
-                    {% for precaution in precautions %}
-                        <li>{{ precaution }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    {% elif error %}
-        <div class="alert alert-danger" role="alert">
-            <i class="fas fa-exclamation-circle"></i> {{ error }}
-        </div>
-    {% endif %}
+<!-- 🌙 Dark Mode Toggle -->
+<div class="dark-toggle">
+  <label for="darkSwitch" class="form-check-label"><i class="fas fa-moon"></i></label>
+  <input class="form-check-input" type="checkbox" id="darkSwitch" onclick="toggleDarkMode()" />
 </div>
 
-<!-- Bootstrap 5 JS and dependencies -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<div class="container my-5">
+  <!-- Page Title -->
+  <h1><i class="fas fa-brain"></i> Spinal Condition Prediction Tool</h1>
+  <p class="text-center text-muted mb-4">Upload a <strong>DICOM (.dcm)</strong> image to detect spinal conditions and receive suggestions.</p>
+
+  <!-- File Upload Section -->
+  <form enctype="multipart/form-data" id="uploadForm">
+    <div class="file-input-wrapper" onclick="document.getElementById('fileInput').click();">
+      <input type="file" id="fileInput" name="file" accept=".dcm" onchange="uploadFile(event)">
+      <i class="fas fa-upload"></i>
+      <span>Click or Drag & Drop to Upload MRI DICOM File</span>
+    </div>
+  </form>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" id="loadingSpinner">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="text-muted mt-2">Processing your image, please wait...</p>
+  </div>
+
+  <!-- Prediction Result -->
+  {% if prediction %}
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title text-success"><i class="fas fa-stethoscope"></i> Predicted Condition: <strong>{{ prediction }}</strong></h5>
+
+        <h6 class="card-subtitle mt-4 text-primary">Associated Symptoms</h6>
+        <ul>
+          {% for symptom in symptoms %}
+            <li><i class="fas fa-exclamation-circle text-warning"></i> {{ symptom }}</li>
+          {% endfor %}
+        </ul>
+
+        <h6 class="card-subtitle mt-4 text-primary">Recommended Precautions</h6>
+        <ul>
+          {% for precaution in precautions %}
+            <li><i class="fas fa-shield-alt text-info"></i> {{ precaution }}</li>
+          {% endfor %}
+        </ul>
+
+        <!-- 📄 Download PDF -->
+        <button class="btn btn-outline-danger btn-pdf" onclick="window.print()">
+          <i class="fas fa-file-pdf"></i> Download Report as PDF
+        </button>
+      </div>
+    </div>
+  {% elif error %}
+    <div class="alert alert-danger mt-4" role="alert">
+      <i class="fas fa-exclamation-triangle"></i> {{ error }}
+    </div>
+  {% endif %}
+</div>
+
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
 
-<!-- Custom JS for handling file input and displaying loader -->
 <script>
-    function uploadFile(event) {
-        // Show loader while processing
-        document.getElementById('loadingSpinner').style.display = 'block';
+  // Handle file upload
+  function uploadFile(event) {
+    document.getElementById('loadingSpinner').style.display = 'block';
 
-        let formData = new FormData();
-        formData.append('file', event.target.files[0]);
+    let formData = new FormData();
+    formData.append('file', event.target.files[0]);
 
-        fetch('/predict', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.text())
-        .then(html => {
-            document.body.innerHTML = html; // Replace body with the updated result
-        })
-        .catch(error => {
-            console.error('Error uploading file:', error);
-            document.getElementById('loadingSpinner').style.display = 'none';
-        });
-    }
+    fetch('/predict', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(html => {
+      document.body.innerHTML = html;
+    })
+    .catch(error => {
+      console.error('Error uploading file:', error);
+      document.getElementById('loadingSpinner').style.display = 'none';
+    });
+  }
+
+  // Toggle Dark Mode
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
 </script>
 
 </body>
