@@ -49,7 +49,4 @@ We explore multiple deep learning approaches for both **detection** and **multi-
 - 🏷 Loss Function: BCEWithLogitsLoss + Weighted Focal Loss
 - 📊 Evaluation: mAP, Accuracy, ROC-AUC, per-disease F1-score
 
----
-
-## 📁 Folder Structure
 
