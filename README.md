@@ -1,7 +1,5 @@
 # 🧠 Lumbar Spine Degenerative Disease Classification
 
-![MRI Spine](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MRI_Lumbar_Spine_Sagittal.jpg/800px-MRI_Lumbar_Spine_Sagittal.jpg)
-
 ## 📌 Overview
 
 This project aims to **automatically detect and classify lumbar spine degenerative diseases** from sagittal MRI images using deep learning techniques. The primary objective is to aid radiologists and clinicians in assessing common lumbar degenerative conditions, enabling faster diagnosis and improved patient outcomes.
